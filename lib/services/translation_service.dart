@@ -175,7 +175,9 @@ class TranslationService extends ChangeNotifier {
           'Probá de nuevo con mejor conexión.';
       await DownloadNotifier.showError('La descarga tardó demasiado.');
     } catch (e) {
-      _error = '$e';
+      _error = e is Exception
+          ? e.toString().replaceFirst('Exception: ', '')
+          : '$e';
       await DownloadNotifier.showError(
         'No se completó la descarga. Abrí la app para ver el detalle.',
       );

@@ -57,6 +57,13 @@ object EngineManager {
                 translator = engine
                 loadedPath = dir.absolutePath
                 Log.i(TAG, "pack cargado en ${System.currentTimeMillis() - started} ms (${tokenizer.size} tokens)")
+
+                // First inference is much slower (kernel setup): warm it up here
+                // so the user's first sentence does not pay that cost.
+                val warmStarted = System.currentTimeMillis()
+                runCatching { engine.translate("hola") }
+                Log.i(TAG, "motor precalentado en ${System.currentTimeMillis() - warmStarted} ms")
+
                 main.post { onDone(null) }
             } catch (error: Throwable) {
                 Log.e(TAG, "no se pudo cargar el paquete", error)
